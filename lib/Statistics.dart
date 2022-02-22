@@ -13,23 +13,21 @@ class Statistics extends StatefulWidget {
 class StatisticsState extends State<Statistics> {
 
   List<int> checkings = [];
-  String nowyearmonth =
-  (DateTime.now().year.toString() + DateTime.now().month.toString());
   Map<String,List<ProjectData>> daysMap = {};
   List<ProjectData> todaydata;
 
-  getdakatime() async {
+  getdakatime(int year,int month) async {
 
     //获取当前月份有多少天
-    var dayCount = DateTime(DateTime.now().year, DateTime.now().month + 1, 0).day;
+    var dayCount = DateTime(year, month + 1, 0).day;
+    //当前日历所在的年月
+    String nowyearmonth = year.toString()+month.toString();
     //生产当前月份天数得数组
     for (int j = 0; j < dayCount; j++) {
       checkings.add(0);
     }
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    // print(nowyearmonth);
     //本地缓存中有当前月得打卡记录进入
     if (prefs.getStringList(nowyearmonth) != null) {
       List<String> localdakadatas = prefs.getStringList(nowyearmonth);
@@ -81,7 +79,7 @@ class StatisticsState extends State<Statistics> {
   @override
   void initState() {
     super.initState();
-    getdakatime();
+    getdakatime(DateTime.now().year,DateTime.now().month);
   }
 
   @override
@@ -93,7 +91,6 @@ class StatisticsState extends State<Statistics> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      backgroundColor: Color(0xFFeef2f3),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.only(left: 20, right: 20, top: 20),
@@ -104,6 +101,9 @@ class StatisticsState extends State<Statistics> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(color: Colors.grey[300], blurRadius: 3)
+                  ],
                 ),
                 child: CustomCalendar.CalendarDatePicker(
                   initialDate: DateTime.now(),
@@ -115,9 +115,14 @@ class StatisticsState extends State<Statistics> {
                     });
                   },
                   onDisplayedMonthChanged:(DateTime value) {
-                    // getdakatime();
-                    print(
-                        '${value.year}' + '${value.month}' + '${value.day}');
+                    //清除dayMap中存储的当月数据
+                    daysMap.clear();
+                    //清楚checkings中存储的当月打卡状态
+                    checkings.clear();
+                    //重新获取改变的月份的数据和状态
+                    getdakatime(value.year,value.month);
+                    // print(
+                    //     '${value.year}' + '${value.month}' + '${value.day}');
                   },
                   checking: checkings,
                 ),
@@ -127,11 +132,12 @@ class StatisticsState extends State<Statistics> {
               ),
               todaydata != null
                   ? Container(
-                      padding: EdgeInsets.only(top: 15, bottom: 15, left: 15),
-                      width: double.infinity,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(color: Colors.grey[300], blurRadius: 3)
+                        ],
                       ),
                       child: Column(
                         children: [
@@ -139,33 +145,39 @@ class StatisticsState extends State<Statistics> {
                               physics: NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               itemCount: todaydata.length,
-                              itemExtent: 65,
+                              itemExtent: 75,
                               itemBuilder: (BuildContext context, int index) {
-                                return Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
+                                return Column(
                                   children: [
-                                    SizedBox(
-                                      height: 50,
-                                      width: 50,
-                                      child: SvgPicture.asset(
-                                          'assets/${todaydata[index].svgurl}.svg'),
-                                    ),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                    Padding(padding: EdgeInsets.only(left: 15,right: 15,top:10,bottom: 10),child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        Text('${todaydata[index].projectname}',
-                                            style: TextStyle(fontSize: 18)),
-                                        //已打卡${dakadatas.time.substring(11, 16)}
-                                        Text('已打卡',
-                                            style: TextStyle(fontSize: 14)),
+                                        SizedBox(
+                                          height: 50,
+                                          width: 50,
+                                          child: SvgPicture.asset(
+                                              'assets/${todaydata[index].svgurl}.svg'),
+                                        ),
+                                        SizedBox(
+                                          width: 15,
+                                        ),
+                                        Expanded(child: Column(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+                                            Text('${todaydata[index].projectname}',
+                                                style: TextStyle(fontSize: 18)),
+                                            //已打卡${dakadatas.time.substring(11, 16)}
+                                            Text('已打卡',
+                                                style: TextStyle(fontSize: 13)),
+                                          ],
+                                        )),
+                                        Text(todaydata[index].time.substring(11, 16),),
                                       ],
-                                    ),
+                                    ),),
+                                    index == todaydata.length-1?Container() :Container(height: 1,color: Colors.grey[200],)
                                   ],
                                 );
                               })

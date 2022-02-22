@@ -279,11 +279,26 @@ class HomeState extends State<Home> {
         ),
       );
     } else {
-      return PunchInButton(
-          buttonsvg: Container(),
-          tabtext: '无法打卡',
-          punchintext: '',
-          color: Colors.white);
+      return Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          color: Color(0xffd6d6d6),
+          boxShadow: [
+            BoxShadow(color: Colors.grey, blurRadius: 3.0)
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Icon(Icons.cancel,size: 100,color: Colors.white,),
+            Text(
+              '无法打卡',
+              style: TextStyle(fontSize: 18,color: Colors.white),
+            ),
+          ],
+        )
+      );
     }
   }
 
@@ -301,7 +316,7 @@ class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFeef2f3),
+      // backgroundColor: Color(0xFFeef2f3),
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
@@ -397,9 +412,9 @@ class HomeState extends State<Home> {
                                   child: TextField(
                                     onChanged: (text) {
                                       //输入框内容变化回调
-                                      setState(() {
+                                      // setState(() {
                                         input_text = text;
-                                      });
+                                      // });
                                     },
                                     controller:
                                         TextEditingController(text: input_text),
@@ -661,6 +676,10 @@ class HomeState extends State<Home> {
                                         await SharedPreferences.getInstance();
 
                                     if (prefs.getStringList('1') != null) {
+
+                                      //判断当前选中的时间是否再打卡项目的时间内,如果不在则创建新的打卡项目,在则提示当前时间与其他打卡项目冲突
+
+
                                       List<String> projectdata =
                                           prefs.getStringList('1');
                                       projectdata.add(JsonEncoder().convert({

@@ -18,7 +18,7 @@ class PunchInButton extends StatelessWidget {
         gradient: linearGradient,
         color: color,
         boxShadow: [
-          BoxShadow(color: Colors.grey, blurRadius: 3.0)
+          BoxShadow(color: Colors.grey[300], blurRadius: 3)
         ],
       ),
       child: Column(
