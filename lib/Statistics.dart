@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo/ProjectData.dart';
+import 'package:todo/ShowPunchInItems.dart';
 import 'calendar.dart' as CustomCalendar;
 
 class Statistics extends StatefulWidget {
@@ -44,7 +44,7 @@ class StatisticsState extends State<Statistics> {
       //遍历数组把数据塞到map里
       for(var item in projectDataList){
         //判断map的key中是否含有打卡记录那一天
-        if(daysMap.keys.contains(item.dakatime)){
+        if(daysMap.keys.contains(item.dakatime.substring(8, 10))){
           //map的key有打卡记录中的那一天时,增加value的数据到对应的key中
           List<ProjectData> days =  daysMap[item.dakatime.substring(8, 10)];
           days.add(item);
@@ -121,8 +121,6 @@ class StatisticsState extends State<Statistics> {
                     checkings.clear();
                     //重新获取改变的月份的数据和状态
                     getdakatime(value.year,value.month);
-                    // print(
-                    //     '${value.year}' + '${value.month}' + '${value.day}');
                   },
                   checking: checkings,
                 ),
@@ -131,59 +129,7 @@ class StatisticsState extends State<Statistics> {
                 height: 20,
               ),
               todaydata != null
-                  ? Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(color: Colors.grey[300], blurRadius: 3)
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: todaydata.length,
-                              itemExtent: 73,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Column(
-                                  children: [
-                                    Padding(padding: EdgeInsets.only(left: 15,right: 15,top:10,bottom: 10),child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        SizedBox(
-                                          height: 50,
-                                          width: 50,
-                                          child: SvgPicture.asset(
-                                              'assets/${todaydata[index].svgurl}.svg'),
-                                        ),
-                                        SizedBox(
-                                          width: 15,
-                                        ),
-                                        Expanded(child: Column(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            Text('${todaydata[index].projectname}',
-                                                style: TextStyle(fontSize: 18)),
-                                            //已打卡${dakadatas.time.substring(11, 16)}
-                                            Text('已打卡',
-                                                style: TextStyle(fontSize: 13)),
-                                          ],
-                                        )),
-                                        Text(todaydata[index].dakatime.substring(11, 16),),
-                                      ],
-                                    ),),
-                                    index == todaydata.length-1?Container() :Container(height: 1,color: Colors.grey[200],)
-                                  ],
-                                );
-                              })
-                        ],
-                      ),
-                    )
+                  ? ShowpPunchInItems(datas:todaydata,showtimetype:'打卡时间',)
                   : Container(
               ),
             ],

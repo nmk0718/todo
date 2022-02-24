@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/cupertino.dart';
@@ -249,7 +248,7 @@ class HomeState extends State<Home> {
           buttonsvg: SvgPicture.asset(
             'assets/${timeframe.svgurl}.svg',
           ),
-          tabtext: '${timeframe.projectname}',
+          tabtext: timeframe.projectname,
           punchintext: timeframe.status == true
               ? '已打卡'
               : '${timeframe.starttime.toString().substring(0, 2)}:${timeframe.starttime.toString().substring(2, 4)}-${timeframe.endtime.toString().substring(0, 2)}:${timeframe.endtime.toString().substring(2, 4)}',
@@ -262,7 +261,7 @@ class HomeState extends State<Home> {
           buttonsvg: SvgPicture.asset(
             'assets/${timeframe.svgurl}.svg',
           ),
-          tabtext: '${timeframe.projectname}',
+          tabtext: timeframe.projectname,
           punchintext: '已打卡',
           linearGradient: LinearGradient(
             colors: [Color(0xFFFFCC80), Colors.orangeAccent],
@@ -690,7 +689,7 @@ class HomeState extends State<Home> {
                                       prefs.setStringList('1', projectdata);
                                     }
                                     Navigator.pop(context);
-                                    // getdatetime();
+                                    getdatetime();
                                   } else {
                                     print(input_text);
                                   }

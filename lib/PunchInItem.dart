@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ProjectData.dart';
+import 'ShowPunchInItems.dart';
 
 class PunchInItem extends StatefulWidget {
   PunchInItemState createState() => PunchInItemState();
@@ -12,7 +12,6 @@ class PunchInItem extends StatefulWidget {
 
 class PunchInItemState extends State<PunchInItem> {
   List<ProjectData> punchinitem = [];
-  int itemlength = 0;
 
   Future<void> GetPunchInItem() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -24,7 +23,6 @@ class PunchInItemState extends State<PunchInItem> {
             ProjectData.fromJson(json.decode(localdakadatas[i]));
         setState(() {
           punchinitem.add(dakadatas);
-          itemlength = localdakadatas.length;
         });
       }
     }
@@ -47,48 +45,7 @@ class PunchInItemState extends State<PunchInItem> {
       body: Padding(
         padding: EdgeInsets.only(top: 20, left: 20, right: 20),
         child: Column(children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(10.0)),
-              color: Colors.white,
-              boxShadow: [BoxShadow(color: Colors.grey[300], blurRadius: 3)],
-            ),
-            child:ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: itemlength,
-                itemExtent: 73,
-                itemBuilder: (BuildContext context, int index) {
-                  return Column(
-                    children: [
-                      Padding(padding: EdgeInsets.only(left: 15,right: 15,top:10,bottom: 10),child: Row(
-                        children: [
-                          SizedBox(
-                            height: 50,
-                            width: 50,
-                            child: SvgPicture.asset(
-                                'assets/${punchinitem[index].svgurl}.svg'),
-                          ),
-                          SizedBox(
-                            width: 15,
-                          ),
-                          Expanded(
-                            child: Text('${punchinitem[index].projectname}',
-                                style: TextStyle(fontSize: 18)),
-                          ),
-                          Text('${punchinitem[index].starttime.substring(0,2)}' +
-                              ':' +
-                              '${punchinitem[index].starttime.substring(2,4)}' +
-                              '~' +
-                              '${punchinitem[index].endtime.substring(0,2)}' +
-                              ':' +
-                              '${punchinitem[index].endtime.substring(2,4)}'),
-                        ],
-                      ),),
-                      index == itemlength-1?Container() :Container(height: 1,color: Colors.grey[200],)
-                    ],
-                  );
-                }),),
+          ShowpPunchInItems(datas:punchinitem,showtimetype:'打卡范围',),
         ]),
       ),
     ));
