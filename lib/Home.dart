@@ -110,6 +110,9 @@ class HomeState extends State<Home> {
     '59'
   ];
   List svglist = [
+    'morning',
+    'noon',
+    'night',
     'rice',
     'bodybuilding',
     'professionalskills',
@@ -123,6 +126,9 @@ class HomeState extends State<Home> {
     'painting'
   ];
   List defaulttext = [
+    '早晨',
+    '中午',
+    '夜晚',
     '吃饭',
     '健身',
     '技能学习',
@@ -136,6 +142,9 @@ class HomeState extends State<Home> {
     '绘画'
   ];
   List svgselected = [
+    false,
+    false,
+    false,
     false,
     false,
     false,
@@ -165,26 +174,27 @@ class HomeState extends State<Home> {
       List<String> localdakadatas = prefs.getStringList(nowyearmonth);
       for (int i = 0; i < localdakadatas.length; i++) {
         ProjectData dakadatas =
-        ProjectData.fromJson(json.decode(localdakadatas[i]));
-        int dakastarttime = int.parse(dakadatas.starthour + dakadatas.startmin);
-        int dakaendtime = int.parse(dakadatas.endhour + dakadatas.endmin);
-        if(dakadatas.day == DateTime.now().day.toString() && dakastarttime <= nowhourmin && nowhourmin <= dakaendtime){
-            setState(() {
-              timeframe = dakadatas;
-            });
-        }else{
+            ProjectData.fromJson(json.decode(localdakadatas[i]));
+        if (dakadatas.dakatime.substring(8, 10) ==
+                DateTime.now().day.toString() &&
+            int.parse(dakadatas.starttime) <= nowhourmin &&
+            nowhourmin <= int.parse(dakadatas.endtime)) {
+          setState(() {
+            timeframe = dakadatas;
+          });
+        } else {
           List<String> localdakadatas = prefs.getStringList('1');
           for (int i = 0; i < localdakadatas.length; i++) {
             ProjectData dakadatas =
-            ProjectData.fromJson(json.decode(localdakadatas[i]));
-            int dakastarttime = int.parse(dakadatas.starthour + dakadatas.startmin);
-            int dakaendtime = int.parse(dakadatas.endhour + dakadatas.endmin);
+                ProjectData.fromJson(json.decode(localdakadatas[i]));
 
-            if (dakastarttime <= nowhourmin && nowhourmin <= dakaendtime) {
+            if (int.parse(dakadatas.starttime) <= nowhourmin &&
+                nowhourmin <= int.parse(dakadatas.endtime)) {
               setState(() {
                 timeframe = dakadatas;
               });
-            };
+            }
+            ;
           }
         }
       }
@@ -195,15 +205,15 @@ class HomeState extends State<Home> {
         List<String> localdakadatas = prefs.getStringList('1');
         for (int i = 0; i < localdakadatas.length; i++) {
           ProjectData dakadatas =
-          ProjectData.fromJson(json.decode(localdakadatas[i]));
-          int dakastarttime = int.parse(dakadatas.starthour + dakadatas.startmin);
-          int dakaendtime = int.parse(dakadatas.endhour + dakadatas.endmin);
+              ProjectData.fromJson(json.decode(localdakadatas[i]));
 
-          if (dakastarttime <= nowhourmin && nowhourmin <= dakaendtime) {
+          if (int.parse(dakadatas.starttime) <= nowhourmin &&
+              nowhourmin <= int.parse(dakadatas.endtime)) {
             setState(() {
               timeframe = dakadatas;
             });
-          };
+          }
+          ;
         }
       }
     }
@@ -217,41 +227,22 @@ class HomeState extends State<Home> {
         onFlipDone: (status) async {
           if (status = true) {
             SharedPreferences prefs = await SharedPreferences.getInstance();
+            List<String> dakalist = [];
             if (prefs.getStringList(nowyearmonth) != null) {
-              print('有');
-              List<String> dakalist = prefs.getStringList(nowyearmonth);
-              String day = DateTime.now().day.toString();
-              String time = DateTime.now().toString().substring(0, 19);
-              dakalist.add(JsonEncoder().convert({
-                "projectname": timeframe.projectname,
-                "svgurl": timeframe.svgurl,
-                "starthour": timeframe.starthour,
-                "startmin": timeframe.startmin,
-                "endhour": timeframe.endhour,
-                "endmin": timeframe.endmin,
-                "status": true,
-                "day": day,
-                "time": time
-              }).toString());
-              prefs.setStringList(nowyearmonth, dakalist);
+              dakalist = prefs.getStringList(nowyearmonth);
             } else {
-              print('没有');
-              List<String> dakalist = [];
-              String day = DateTime.now().day.toString();
-              String time = DateTime.now().toString().substring(0, 19);
-              dakalist.add(JsonEncoder().convert({
-                "projectname": timeframe.projectname,
-                "svgurl": timeframe.svgurl,
-                "starthour": timeframe.starthour,
-                "startmin": timeframe.startmin,
-                "endhour": timeframe.endhour,
-                "endmin": timeframe.endmin,
-                "status": true,
-                "day": day,
-                "time": time
-              }).toString());
-              prefs.setStringList(nowyearmonth, dakalist);
+              dakalist = [];
             }
+            String time = DateTime.now().toString().substring(0, 19);
+            dakalist.add(JsonEncoder().convert({
+              "projectname": timeframe.projectname,
+              "svgurl": timeframe.svgurl,
+              "starttime": timeframe.starttime,
+              "endtime": timeframe.endtime,
+              "status": true,
+              "dakatime": time
+            }).toString());
+            prefs.setStringList(nowyearmonth, dakalist);
           }
         },
         front: PunchInButton(
@@ -261,7 +252,7 @@ class HomeState extends State<Home> {
           tabtext: '${timeframe.projectname}',
           punchintext: timeframe.status == true
               ? '已打卡'
-              : '${timeframe.starthour}:${timeframe.startmin}-${timeframe.endhour}:${timeframe.endmin}',
+              : '${timeframe.starttime.toString().substring(0, 2)}:${timeframe.starttime.toString().substring(2, 4)}-${timeframe.endtime.toString().substring(0, 2)}:${timeframe.endtime.toString().substring(2, 4)}',
           color: timeframe.status == true ? null : Colors.white,
           linearGradient: timeframe.status == true
               ? LinearGradient(colors: [Color(0xFFFFCC80), Colors.orangeAccent])
@@ -280,25 +271,26 @@ class HomeState extends State<Home> {
       );
     } else {
       return Container(
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          color: Color(0xffd6d6d6),
-          boxShadow: [
-            BoxShadow(color: Colors.grey, blurRadius: 3.0)
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Icon(Icons.cancel,size: 100,color: Colors.white,),
-            Text(
-              '无法打卡',
-              style: TextStyle(fontSize: 18,color: Colors.white),
-            ),
-          ],
-        )
-      );
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            color: Color(0xffd6d6d6),
+            boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 3.0)],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Icon(
+                Icons.cancel,
+                size: 100,
+                color: Colors.white,
+              ),
+              Text(
+                '无法打卡',
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
+            ],
+          ));
     }
   }
 
@@ -413,7 +405,7 @@ class HomeState extends State<Home> {
                                     onChanged: (text) {
                                       //输入框内容变化回调
                                       // setState(() {
-                                        input_text = text;
+                                      input_text = text;
                                       // });
                                     },
                                     controller:
@@ -676,19 +668,14 @@ class HomeState extends State<Home> {
                                         await SharedPreferences.getInstance();
 
                                     if (prefs.getStringList('1') != null) {
-
                                       //判断当前选中的时间是否再打卡项目的时间内,如果不在则创建新的打卡项目,在则提示当前时间与其他打卡项目冲突
-
-
                                       List<String> projectdata =
                                           prefs.getStringList('1');
                                       projectdata.add(JsonEncoder().convert({
                                         "projectname": "${input_text}",
                                         "svgurl": "${svglist[selectedindex]}",
-                                        "starthour": "$starthour",
-                                        "startmin": "$startmin",
-                                        "endhour": "$endhour",
-                                        "endmin": "$endmin",
+                                        "starttime": starthour + startmin,
+                                        "endtime": endhour + endmin,
                                       }).toString());
                                       prefs.setStringList('1', projectdata);
                                     } else {
@@ -696,16 +683,14 @@ class HomeState extends State<Home> {
                                         JsonEncoder().convert({
                                           "projectname": "${input_text}",
                                           "svgurl": "${svglist[selectedindex]}",
-                                          "starthour": "$starthour",
-                                          "startmin": "$startmin",
-                                          "endhour": "$endhour",
-                                          "endmin": "$endmin",
+                                          "starttime": starthour + startmin,
+                                          "endtime": endhour + endmin,
                                         }).toString()
                                       ];
                                       prefs.setStringList('1', projectdata);
                                     }
                                     Navigator.pop(context);
-                                    getdatetime();
+                                    // getdatetime();
                                   } else {
                                     print(input_text);
                                   }

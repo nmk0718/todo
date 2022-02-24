@@ -33,7 +33,6 @@ class PunchInButton extends StatelessWidget {
               tabtext,
             style: TextStyle(fontSize: 16),
           ),
-          // Text('07:00-09:00')
           Text(
             punchintext,
             style: TextStyle(fontSize: 12),

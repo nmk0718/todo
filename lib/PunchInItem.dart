@@ -57,7 +57,7 @@ class PunchInItemState extends State<PunchInItem> {
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: itemlength,
-                itemExtent: 75,
+                itemExtent: 73,
                 itemBuilder: (BuildContext context, int index) {
                   return Column(
                     children: [
@@ -70,19 +70,19 @@ class PunchInItemState extends State<PunchInItem> {
                                 'assets/${punchinitem[index].svgurl}.svg'),
                           ),
                           SizedBox(
-                            width: 20,
+                            width: 15,
                           ),
                           Expanded(
                             child: Text('${punchinitem[index].projectname}',
                                 style: TextStyle(fontSize: 18)),
                           ),
-                          Text('${punchinitem[index].starthour}' +
+                          Text('${punchinitem[index].starttime.substring(0,2)}' +
                               ':' +
-                              '${punchinitem[index].startmin}' +
+                              '${punchinitem[index].starttime.substring(2,4)}' +
                               '~' +
-                              '${punchinitem[index].endhour}' +
+                              '${punchinitem[index].endtime.substring(0,2)}' +
                               ':' +
-                              '${punchinitem[index].endmin}'),
+                              '${punchinitem[index].endtime.substring(2,4)}'),
                         ],
                       ),),
                       index == itemlength-1?Container() :Container(height: 1,color: Colors.grey[200],)
