@@ -44,15 +44,15 @@ class StatisticsState extends State<Statistics> {
       //遍历数组把数据塞到map里
       for(var item in projectDataList){
         //判断map的key中是否含有打卡记录那一天
-        if(daysMap.keys.contains(item.dakatime.substring(8, 10))){
+        if(daysMap.keys.contains(item.dakatime.substring(9, 10))){
           //map的key有打卡记录中的那一天时,增加value的数据到对应的key中
-          List<ProjectData> days =  daysMap[item.dakatime.substring(8, 10)];
+          List<ProjectData> days =  daysMap[item.dakatime.substring(9, 10)];
           days.add(item);
         }else{
           //map的key没有打卡记录中的那一天时,增加key为数据中的day value为数据
           List<ProjectData> days =[];
           days.add(item);
-          daysMap[item.dakatime.substring(8, 10)] = days;
+          daysMap[item.dakatime.substring(9, 10)] = days;
         }
       }
 

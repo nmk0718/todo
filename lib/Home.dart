@@ -174,7 +174,7 @@ class HomeState extends State<Home> {
       for (int i = 0; i < localdakadatas.length; i++) {
         ProjectData dakadatas =
             ProjectData.fromJson(json.decode(localdakadatas[i]));
-        if (dakadatas.dakatime.substring(8, 10) ==
+        if (dakadatas.dakatime.substring(9, 10) ==
                 DateTime.now().day.toString() &&
             int.parse(dakadatas.starttime) <= nowhourmin &&
             nowhourmin <= int.parse(dakadatas.endtime)) {
