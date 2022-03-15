@@ -168,14 +168,14 @@ class HomeState extends State<Home> {
         DateTime.now().toString().substring(14, 16));
 
     if (prefs.getStringList(nowyearmonth) != null) {
+      String day =DateTime.now().day<10 ? '0'+DateTime.now().day.toString():DateTime.now().day.toString();
       //本地有当前月打卡记录时进入
       //获取当前是否有打卡数据. 如果有打卡数据 遍历打卡数据 判断当前时间是否在打卡数据的时间内,如果在打卡时间则显示已经打卡.
       List<String> localdakadatas = prefs.getStringList(nowyearmonth);
       for (int i = 0; i < localdakadatas.length; i++) {
         ProjectData dakadatas =
             ProjectData.fromJson(json.decode(localdakadatas[i]));
-        if (dakadatas.dakatime.substring(9, 10) ==
-                DateTime.now().day.toString() &&
+        if (dakadatas.dakatime.substring(8, 10) == day &&
             int.parse(dakadatas.starttime) <= nowhourmin &&
             nowhourmin <= int.parse(dakadatas.endtime)) {
           setState(() {
